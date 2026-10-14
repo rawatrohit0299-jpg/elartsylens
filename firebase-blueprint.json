@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "Story": {
+      "title": "Story",
+      "description": "A visual narrative or photo essay.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "thumbnailUrl": { "type": "string", "format": "uri" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "imageHint": { "type": "string" },
+        "location": { "type": "string" },
+        "year": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "body": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "thumbnailUrl", "title", "body"]
+    },
+    "GalleryImage": {
+      "title": "Gallery Image",
+      "description": "An individual photo in the archive.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "description": { "type": "string" },
+        "imageHint": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "tagline": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "imageUrl"]
+    }
+  },
+  "firestore": {
+    "/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Collection of photo stories."
+    },
+    "/gallery/{imageId}": {
+      "schema": "GalleryImage",
+      "description": "Collection of archive photos."
+    }
+  }
+}

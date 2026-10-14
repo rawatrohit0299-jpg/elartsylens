@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: stories
+    // Document ID: storyId
+    // Fields:
+    //   - id: string (required)
+    //   - thumbnailUrl: string (required, URL)
+    //   - width: number
+    //   - height: number
+    //   - imageHint: string
+    //   - location: string
+    //   - year: string
+    //   - title: string (required)
+    //   - subtitle: string
+    //   - description: string
+    //   - body: string (required)
+    //   - createdAt: timestamp
+    //
+    // Collection: gallery
+    // Document ID: imageId
+    // Fields:
+    //   - id: string (required)
+    //   - imageUrl: string (required, URL)
+    //   - description: string
+    //   - imageHint: string
+    //   - width: number
+    //   - height: number
+    //   - tagline: string
+    //   - category: string
+    //   - createdAt: timestamp
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "rawat@elartsylens.com" && request.auth.token.email_verified == true)); // Default admin
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function isValidStory(data) {
+      return data.keys().hasAll(['id', 'thumbnailUrl', 'title', 'body']) &&
+             data.id is string && data.id.size() < 100 &&
+             data.title is string && data.title.size() < 200 &&
+             data.body is string && data.body.size() < 10000 &&
+             isValidUrl(data.thumbnailUrl);
+    }
+
+    function isValidGalleryImage(data) {
+      return data.keys().hasAll(['id', 'imageUrl']) &&
+             data.id is string && data.id.size() < 100 &&
+             isValidUrl(data.imageUrl);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /stories/{storyId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    match /gallery/{imageId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

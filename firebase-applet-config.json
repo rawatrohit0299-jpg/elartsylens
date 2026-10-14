@@ -1,0 +1,10 @@
+{
+  "projectId": "el-artsy-lens",
+  "appId": "1:816478751535:web:93236d5b6bf26ee5532fda",
+  "apiKey": "AIzaSyAEJ8vdUElwwtjPgwBNbLMvXf4rpXYnvYo",
+  "authDomain": "el-artsy-lens.firebaseapp.com",
+  "firestoreDatabaseId": "us-west-db",
+  "storageBucket": "el-artsy-lens.firebasestorage.app",
+  "messagingSenderId": "816478751535",
+  "measurementId": ""
+}
